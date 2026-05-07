@@ -14,18 +14,25 @@
 | `install.rsc` | MikroTik 一键安装脚本 |
 | `Dockerfile` | 容器镜像构建文件 |
 
-## MikroTik 一键安装
+## MikroTik 一键下载
 
 > 前提：RouterOS 7.4+、x86_64 架构、已安装 container 包、已启用 `container` 设备模式
 
-在 MikroTik Terminal 中粘贴执行：
+在 MikroTik Terminal 中执行：
 
 ```routeros
-/tool/fetch url="https://raw.githubusercontent.com/qq48674431/container-sing-box/main/install.rsc" dst-path=install.rsc
-/import install.rsc
+/tool/fetch url="https://raw.githubusercontent.com/qq48674431/container-sing-box/main/singbox-mikrotik.tar" dst-path=singbox-mikrotik.tar
 ```
 
-或者手动安装，见 [RouterOS-install.md](RouterOS-install.md)。
+然后创建并启动容器：
+
+```routeros
+/container/add file=singbox-mikrotik.tar interface=veth-Linux logging=yes name=singbox root-dir=/root start-on-boot=yes workdir=/
+:delay 5s
+/container/start singbox
+```
+
+完整手动安装步骤见 [RouterOS-install.md](RouterOS-install.md)。
 
 ## 启用容器设备模式（首次）
 
