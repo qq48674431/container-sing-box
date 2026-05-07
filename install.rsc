@@ -4,7 +4,7 @@
 :local tarUrl "https://raw.githubusercontent.com/qq48674431/container-sing-box/main/singbox-mikrotik.tar"
 :local tarFile "singbox-mikrotik.tar"
 :local bridgeName "sing-box"
-:local vethName "veth-singbox"
+:local vethName "veth-Linux"
 :local vethAddr "192.168.101.2/24"
 :local gwAddr "192.168.101.1"
 :local gwCidr "192.168.101.1/24"

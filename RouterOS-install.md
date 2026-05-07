@@ -36,10 +36,10 @@ x86 设备没有物理复位按钮，必须断电重启，软件重启无效。
 /ip/address/add address=192.168.101.1/24 interface=container
 
 # 创建 veth（容器内网卡）
-/interface/veth/add name=veth-singbox address=192.168.101.2/24 gateway=192.168.101.1
+/interface/veth/add name=veth-Linux address=192.168.101.2/24 gateway=192.168.101.1
 
 # 将 veth 加入 bridge
-/interface/bridge/port/add bridge=container interface=veth-singbox
+/interface/bridge/port/add bridge=container interface=veth-Linux
 
 # NAT — 让容器能访问外网
 /ip/firewall/nat/add chain=srcnat action=masquerade src-address=192.168.101.0/24
@@ -57,7 +57,7 @@ scp singbox-mikrotik.tar admin@172.16.18.1:/
 
 ```routeros
 /container
-add file=singbox-mikrotik.tar interface=veth-singbox logging=yes \
+add file=singbox-mikrotik.tar interface=veth-Linux logging=yes \
     name=singbox root-dir=/root start-on-boot=yes workdir=/
 
 # 等待系统解压完成
