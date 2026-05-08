@@ -2,11 +2,11 @@
 
 ## 前提条件
 
-| 项目 | 要求 |
-|------|------|
-| RouterOS 版本 | 7.4+ |
-| 架构 | x86_64 |
-| container 包 | 已安装（System → Packages 中可见） |
+| 项目　　　　　| 要求　　　　　　　　　　　　　　　 |
+| ---------------| ------------------------------------|
+| RouterOS 版本 | 7.4+　　　　　　　　　　　　　　　 |
+| 架构　　　　　| x86_64　　　　　　　　　　　　　　 |
+| container 包　| 已安装（System → Packages 中可见） |
 
 ---
 
@@ -30,16 +30,16 @@ x86 设备没有物理复位按钮，必须断电重启，软件重启无效。
 
 ```routeros
 # 创建容器专用 bridge
-/interface/bridge/add name=container
+/interface/bridge/add name=Linux
 
 # 给 bridge 分配网关 IP
-/ip/address/add address=192.168.101.1/24 interface=container
+/ip/address/add address=192.168.101.1/24 interface=Linux
 
 # 创建 veth（容器内网卡）
 /interface/veth/add name=veth-Linux address=192.168.101.2/24 gateway=192.168.101.1
 
 # 将 veth 加入 bridge
-/interface/bridge/port/add bridge=container interface=veth-Linux
+/interface/bridge/port/add bridge=Linux interface=veth-Linux
 
 # NAT — 让容器能访问外网
 /ip/firewall/nat/add chain=srcnat action=masquerade src-address=192.168.101.0/24
@@ -47,17 +47,13 @@ x86 设备没有物理复位按钮，必须断电重启，软件重启无效。
 
 ## 三、上传容器文件
 
-将 `singbox-mikrotik.tar` 上传到 MikroTik（通过 Winbox 拖拽、WebFig 上传、或 SCP）：
-
-```bash
-scp singbox-mikrotik.tar admin@172.16.18.1:/
-```
+将 `May.container.tar` 上传到 MikroTik（通过 Winbox 拖拽、WebFig 上传、或 SCP）：
 
 ## 四、创建并启动容器
 
 ```routeros
 /container
-add file=singbox-mikrotik.tar interface=veth-Linux logging=yes \
+add file=May.container.tar interface=veth-Linux logging=yes \
     name=singbox root-dir=/root start-on-boot=yes workdir=/
 
 # 等待系统解压完成
@@ -123,13 +119,42 @@ http://192.168.101.2:8080
 
 ```routeros
 # 创建路由表
-/routing/table/add name=proxy fib
+/routing/table/add name=linux fib
 
-# 添加路由
-/ip/route/add dst-address=0.0.0.0/0 gateway=192.168.101.2 routing-table=proxy
+# 添加路由：匹配 linux 路由表的流量走容器网关
+/ip/route/add dst-address=0.0.0.0/0 gateway=192.168.101.2 routing-table=linux
 
-# 标记指定设备流量
-/ip/firewall/mangle/add chain=prerouting src-address=192.168.1.100 action=mark-routing new-routing-mark=proxy
-
-# 如需按多设备分流，重复上面 mangle 规则修改 src-address 即可
+# Mangle 规则：将地址列表中的设备标记到 linux 路由表
+/ip/firewall/mangle/add chain=prerouting action=mark-routing \
+    new-routing-mark=linux passthrough=no src-address-list=linux comment="sing-box proxy"
 ```
+
+### 防火墙地址列表
+
+按网段归类需要分流的设备，供 Mangle 引用：
+
+```routeros
+/ip/firewall/address-list
+add address=172.16.0.0/24 list=linux
+add address=172.16.1.0/24 list=linux
+add address=172.16.2.0/24 list=linux
+add address=172.16.3.0/24 list=linux
+add address=172.16.4.0/24 list=linux
+add address=172.16.5.0/24 list=linux
+add address=172.16.6.0/24 list=linux
+add address=172.16.7.0/24 list=linux
+add address=172.16.8.0/24 list=linux
+add address=172.16.9.0/24 list=linux
+add address=172.16.10.0/24 list=linux
+add address=172.16.11.0/24 list=linux
+add address=172.16.12.0/24 list=linux
+add address=172.16.13.0/24 list=linux
+add address=172.16.14.0/24 list=linux
+add address=172.16.15.0/24 list=linux
+```
+
+> 如需按多设备分流，在地址列表中添加对应网段即可。
+
+<!-- CHECKPOINT id="ckpt_mowfnymj_5g9c4d" time="2026-05-08T04:46:56.011Z" note="auto" fixes=0 questions=0 highlights=0 sections="" -->
+
+<!-- CHECKPOINT id="ckpt_mowh3ehk_duw23m" time="2026-05-08T05:26:56.024Z" note="auto" fixes=0 questions=0 highlights=0 sections="" -->

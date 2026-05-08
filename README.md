@@ -4,15 +4,15 @@
 
 ## 文件说明
 
-| 文件 | 说明 |
-|------|------|
-| `singbox-mikrotik.tar` | 容器镜像（MikroTik 可直接导入） |
-| `sing-box` | 定制版 sing-box 二进制（x86_64，含 Web 面板） |
-| `config.json` | sing-box 配置（TUN 模式，DNS: 223.5.5.5） |
-| `index.html` | Web 管理面板前端 |
-| `proxy-parser.js` | 代理链接解析库 |
-| `install.rsc` | MikroTik 一键安装脚本 |
-| `Dockerfile` | 容器镜像构建文件 |
+| 文件　　　　　　　　　 | 说明　　　　　　　　　　　　　　　　　　　　　|
+| ------------------------| -----------------------------------------------|
+| `singbox-mikrotik.tar` | 容器镜像（MikroTik 可直接导入）　　　　　　　 |
+| `sing-box`　　　　　　 | 定制版 sing-box 二进制（x86_64，含 Web 面板） |
+| `config.json`　　　　　| sing-box 配置（TUN 模式，DNS: 223.5.5.5）　　 |
+| `index.html`　　　　　 | Web 管理面板前端　　　　　　　　　　　　　　　|
+| `proxy-parser.js`　　　| 代理链接解析库　　　　　　　　　　　　　　　　|
+| `install.rsc`　　　　　| MikroTik 一键安装脚本　　　　　　　　　　　　 |
+| `Dockerfile`　　　　　 | 容器镜像构建文件　　　　　　　　　　　　　　　|
 
 ## MikroTik 一键下载
 
